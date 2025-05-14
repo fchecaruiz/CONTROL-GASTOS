@@ -14,6 +14,7 @@ html, body {
   margin: 0;
   padding: 10px;   
   overflow:hidden;
+  overflow-y: auto; 
 }
 
 
@@ -28,7 +29,8 @@ body {
 .container {
   width: 100%;
   max-width: 900px;
-  height: calc(100vh - 20px); 
+  /* Elimina o comenta la siguiente línea para evitar que la altura máxima limite el scroll */
+  /* height: calc(100vh - 20px); */
   margin: auto;
   padding: 20px;
   border-radius: 25px;
@@ -40,12 +42,11 @@ body {
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
+  /* Puedes quitar justify-content: space-between; para que el contenido no se reparta y permita crecer en altura */
   align-items: center;
-  overflow-y: auto;
+  overflow-y: visible; /* Permite el scroll si el contenido crece */
   overflow-x: hidden;
 }
-
 
 
 /* TÍTULOS */
