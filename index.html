@@ -1,14 +1,241 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Control de Gastos</title>
-  <link rel="stylesheet" href="controlGasto.css">
+  <link rel="stylesheet" href="controlGasto.css" />
 </head>
 <body>
-  <!-- Aquí va tu contenido HTML -->
+
+  <main class="container">
+    <h1>Control de Gastos Mensual</h1>
+
+    <!-- Grupo de Saldo -->
+    <section class="saldo-input-group">
+      <button type="button" id="addSaldoButton" class="btn-secondary">Añadir + Saldo</button>
+      <input type="number" id="nuevoSaldoInput" placeholder="Introduce cantidad" aria-label="Cantidad a añadir">
+      <button type="button" id="borrarSaldoButton" class="btn-secondary">Borrar Saldo</button>
+    </section>
+
+    <!-- Toast para saldo incorrecto -->
+    <div id="saldoSeguro" class="toast" role="alert" aria-live="assertive">
+      ⚠️ Introduce una cantidad válida para añadir saldo.
+    </div>
+
+    <!-- Toast Borrar Saldo -->
+    <div id="toastBorrarSaldo" class="toast toast-activo" role="alert" aria-live="assertive">
+      ⚠️ ¿Estás seguro de borrar el saldo?
+      <br>
+      <button id="confirmarBorrado">Sí, borrar</button>
+      <button id="cancelarBorrado">Cancelar</button>
+    </div>
+
+    <!-- Saldos -->
+    <div id="saldoDisplay" class="saldo">Saldo: 0€</div>
+    <div id="totalGastado" class="saldo">Total Gastado: 0€</div>
+
+    <!-- Botón Guardar -->
+    <button id="guardarDatosBtn" class="btn-primary">Guardar Datos</button>
+    <div id="toastGuardarDatos" class="toast" role="alert">✅ Datos guardados correctamente.</div>
+
+    <!-- Barra de estado -->
+    <div id="estadoSaldo" class="estado-saldo">Barra de estado de saldo</div>
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    <!-- Categorías -->
+    <h2>Resumen de gastos por categoría</h2>
+    <ul id="listaGastos">
+      <li data-categoria="alimentacion" class="categoria">Alimentación: <span>0€</span></li>
+      <li data-categoria="ocio" class="categoria">Ocio: <span>0€</span></li>
+      <li data-categoria="gasoil" class="categoria">Gasoil: <span>0€</span></li>
+      <li data-categoria="calefaccion" class="categoria">Calefacción: <span>0€</span></li>
+      <li data-categoria="hipoteca" class="categoria">Hipoteca: <span>0€</span></li>
+      <li data-categoria="luz" class="categoria">Luz: <span>0€</span></li>
+      <li data-categoria="agua" class="categoria">Agua: <span>0€</span></li>
+      <li data-categoria="internet" class="categoria">Internet: <span>0€</span></li>
+      <li data-categoria="otros" class="categoria">Otros: <span>0€</span></li>
+      <li data-categoria="transporte" class="categoria">Transporte: <span>0€</span></li>
+    </ul>
+
+    <hr class="separador">
+
+        <h2 id="definirTexto">Historial de Gastos</h2>
+         <ul id="historialGastos">
+              <!-- Los gastos con fecha aparecerán aquí -->
+        </ul>
+
+
+    <button id="resetButton" class="btn-reset">Resetear Todo</button>
+  </main>
+
+  <!-- Modal Añadir Gasto -->
+  <div id="gastoModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <h2>Añadir Gasto</h2>
+      <p>Categoría: <span id="gastoCategoria"></span></p>
+      <div id="cajaX"><p id="x">X</p></div>
+      <input type="number" id="gastoInput" placeholder="Introduce el gasto" aria-label="Cantidad del gasto">
+      <div class="modal-buttons">
+        <button id="gastoCancel" class="btn-modal cancel">Cancelar</button>
+        <button id="gastoSubmit" class="btn-modal">Añadir</button>
+        <button id="gastoDelete" class="btn-modal delete">Borrar</button>
+        <button id="borrarGastoCompleto" class="btn-modal delete">Borrar Gasto Completo</button>
+        <button id="borrarTodosGastos">Borrar todos los gastos</button>
+      </div>
+    </div>
+  </div>
+
+  <!--AÑADIMOS SECCION EN LA CATEGORIA 'OTROS'-->
+  <div id="modalOtros" class="modal">
+    <div class="modal-content">
+
+      <div id="cajaXOtros"><p id="xOtros">X</p></div>
+
+      <h3>Añade el nombre del gasto:</h3>
+      <input type="text" id="nombreGastoOtros" placeholder="Ej: Seguro del coche">
+      <br><br>
+      <input type="number" id="importeGastoOtros" placeholder="Importe en €">
+      <br><br>
+      <button id="guardarGastoOtros" type="button">Guardar gasto</button>
+      <button id="borrarGastoOtros" type="button">Borrar</button>
+    </div>
+  </div>
   
+  
+  <!-- Toast borrar todos los gastos -->
+  <div id="toastCategoria" class="toast" role="alert">
+    <p>¿Estás seguro de que quieres borrar todos los gastos?</p>
+    <div class="toast-Categorias">
+      <button id="avisoSi" class="toast-btn">Sí</button>
+      <button id="avisoNo" class="toast-btn">No</button>
+    </div>
+  </div>
+
+  <!-- Confirmación de borrado -->
+  <div id="toastConfirmacionCategoria" class="toast" role="alert">
+    <p>✅ Todos los gastos de categorías han sido borrados.</p>
+  </div>
+
+  <!-- Toast reset general -->
+  <div id="toast" class="toast toast-activo" role="alert">
+    <p>¿Estás seguro de que quieres borrar todos los datos?</p>
+    <div class="toast-buttons">
+      <button id="toastConfirm" class="toast-btn">Sí</button>
+      <button id="toastCancel" class="toast-btn">No</button>
+    </div>
+  </div>
+
+  <!-- Segundo toast de confirmación -->
+  <div id="toast2" class="toast toast-activo" role="alert">
+    <p>⚠️ Aviso: Se perderán todos los datos. ¿Realmente estás seguro?</p>
+    <div class="toast-buttons">
+      <button id="toast2Confirm" class="toast-btn">Sí</button>
+      <button id="toast2Cancel" class="toast-btn">No</button>
+    </div>
+  </div>
+
+  <!--EDITAR HISTORIAL DE GASTOS-->
+
+  <div id="modalEditarGasto" class="modal">
+    <div class="modal-content">
+      <div id="cajaXEditar"><p id="xEditar">X</p></div>
+  
+      <h3>Editar gasto</h3>
+  
+      <input type="text" id="editarNombreGasto" placeholder="Nombre (solo si es 'otros')">
+      <br><br>
+      <input type="number" id="editarImporteGasto" placeholder="Nuevo importe (€)">
+      <br><br>
+      <button id="guardarCambiosGasto">Guardar cambios</button>
+    </div>
+  </div>
+  
+
+  <!-- JS principal -->
   <script src="controlGasto.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
