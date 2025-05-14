@@ -621,3 +621,18 @@ p , #gastoCategoria {
   float: right; 
   margin-left: 20px; 
 }
+
+
+/* para los moviles */
+@media (max-width: 600px) {
+  .modificar-gasto {
+    float: none;
+    display: block;
+    margin-left: 0;
+    margin-top: 8px;
+    font-size: 14px;
+    text-align: right;
+    width: 100%;
+    word-break: break-word;
+  }
+}
