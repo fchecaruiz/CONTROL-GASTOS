@@ -472,7 +472,10 @@ document.getElementById("xEditar").addEventListener("click", () => {
 });
 
 
-
+// Registra el service worker para PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
 
 
 
