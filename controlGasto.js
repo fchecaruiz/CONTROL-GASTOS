@@ -34,7 +34,7 @@ function updateUI() {
   for (let categoria in categorias) {
     const elemento = document.querySelector(`[data-categoria=${categoria}]`);
     const gasto = categorias[categoria];
-    elemento.querySelector("span").innerText = `${gasto.tofixed(2)}€`;
+    elemento.querySelector("span").innerText = `${gasto.toFixed(2)}€`;
 
     if (gasto === 0) {
       elemento.style.backgroundColor = "#2980b9";
