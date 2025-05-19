@@ -10,11 +10,14 @@ let categorias = {
 };
 
 let categoriaSeleccionada = "";
+
 function updateUI() {
   document.getElementById("saldoDisplay").innerText = `Saldo: ${saldoFinal.toFixed(2)}€`;
   document.getElementById("totalGastado").innerText = `Total Gastado: ${calcularTotalGastos().toFixed(2)}€`;
 
   const porcentaje = saldoInicial > 0 ? (saldoFinal / saldoInicial) * 100 : 0;
+  console.log("Porcentaje:", porcentaje);
+
   const progressBar = document.getElementById("progressBar");
   progressBar.style.width = `${Math.max(porcentaje, 0)}%`;
 
@@ -31,62 +34,21 @@ function updateUI() {
   for (let categoria in categorias) {
     const elemento = document.querySelector(`[data-categoria=${categoria}]`);
     const gasto = categorias[categoria];
-    if (elemento) {
-      elemento.querySelector("span").innerText = `${gasto.toFixed(2)}€`;
+    elemento.querySelector("span").innerText = `${gasto.toFixed(2)}€`;
 
-      if (gasto === 0) {
-        elemento.style.backgroundColor = "#2980b9";
-      } else if (gasto < 50) {
-        elemento.style.backgroundColor = "#2ecc71";
-      } else if (gasto < 150) {
-        elemento.style.backgroundColor = "#f39c12";
-      } else {
-        elemento.style.backgroundColor = "#e74c3c";
-      }
-
-      elemento.style.color = "white";
+    if (gasto === 0) {
+      elemento.style.backgroundColor = "#2980b9";
+    } else if (gasto < 50) {
+      elemento.style.backgroundColor = "#2ecc71";
+    } else if (gasto < 150) {
+      elemento.style.backgroundColor = "#f39c12";
+    } else {
+      elemento.style.backgroundColor = "#e74c3c";
     }
+
+    elemento.style.color = "white";
   }
 }
-
-// function updateUI() {
-//   document.getElementById("saldoDisplay").innerText = `Saldo: ${saldoFinal.toFixed(2)}€`;
-//   document.getElementById("totalGastado").innerText = `Total Gastado: ${calcularTotalGastos().toFixed(2)}€`;
-
-//   const porcentaje = saldoInicial > 0 ? (saldoFinal / saldoInicial) * 100 : 0;
-//   console.log("Porcentaje:", porcentaje);
-
-//   const progressBar = document.getElementById("progressBar");
-//   progressBar.style.width = `${Math.max(porcentaje, 0)}%`;
-
-//   if (saldoFinal <= 100) {
-//     progressBar.style.backgroundColor = "#e74c3c";
-//   } else if (saldoFinal <= 500) {
-//     progressBar.style.backgroundColor = "#f39c12";
-//   } else if (saldoFinal <= 1000) {
-//     progressBar.style.backgroundColor = "#2ecc71";
-//   } else {
-//     progressBar.style.backgroundColor = "#3498db";
-//   }
-
-//   for (let categoria in categorias) {
-//     const elemento = document.querySelector(`[data-categoria=${categoria}]`);
-//     const gasto = categorias[categoria];
-//     elemento.querySelector("span").innerText = `${gasto.toFixed(2)}€`;
-
-//     if (gasto === 0) {
-//       elemento.style.backgroundColor = "#2980b9";
-//     } else if (gasto < 50) {
-//       elemento.style.backgroundColor = "#2ecc71";
-//     } else if (gasto < 150) {
-//       elemento.style.backgroundColor = "#f39c12";
-//     } else {
-//       elemento.style.backgroundColor = "#e74c3c";
-//     }
-
-//     elemento.style.color = "white";
-//   }
-
 
 
 function showGastoModal(categoria) {
