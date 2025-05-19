@@ -12,8 +12,8 @@ let categorias = {
 let categoriaSeleccionada = "";
 
 function updateUI() {
-  document.getElementById("saldoDisplay").innerText = `Saldo: ${saldoFinal}€`;
-  document.getElementById("totalGastado").innerText = `Total Gastado: ${calcularTotalGastos()}€`;
+  document.getElementById("saldoDisplay").innerText = `Saldo: ${saldoFinal.toFixed(2)}€`;
+  document.getElementById("totalGastado").innerText = `Total Gastado: ${calcularTotalGastos().toFixed(2)}€`;
 
   const porcentaje = saldoInicial > 0 ? (saldoFinal / saldoInicial) * 100 : 0;
   console.log("Porcentaje:", porcentaje);
@@ -34,7 +34,7 @@ function updateUI() {
   for (let categoria in categorias) {
     const elemento = document.querySelector(`[data-categoria=${categoria}]`);
     const gasto = categorias[categoria];
-    elemento.querySelector("span").innerText = `${gasto}€`;
+    elemento.querySelector("span").innerText = `${gasto.tofixed(2)}€`;
 
     if (gasto === 0) {
       elemento.style.backgroundColor = "#2980b9";
