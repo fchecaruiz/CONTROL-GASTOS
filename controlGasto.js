@@ -377,7 +377,7 @@ function eliminarGastoHistorial(index) {
 
   updateUI();
   mostrarHistorial();
-  // guardarDatos();
+  guardarDatosSinToast();
 }
 
 // ----------- RESTO DEL CÓDIGO IGUAL -----------
@@ -476,4 +476,16 @@ document.getElementById("xEditar").addEventListener("click", () => {
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
+}
+
+function guardarDatosSinToast() {
+  localStorage.setItem("saldoInicial", saldoInicial);
+  localStorage.setItem("categorias", JSON.stringify(categorias));
+  localStorage.setItem("saldoFinal", saldoFinal);
+
+  if (gastosConFecha.length === 0) {
+    localStorage.removeItem("gastosConFecha");
+  } else {
+    localStorage.setItem("gastosConFecha", JSON.stringify(gastosConFecha));
+  }
 }
