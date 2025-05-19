@@ -377,7 +377,7 @@ function eliminarGastoHistorial(index) {
 
   updateUI();
   mostrarHistorial();
-  guardarDatos();
+  // guardarDatos();
 }
 
 // ----------- RESTO DEL CÓDIGO IGUAL -----------
