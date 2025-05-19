@@ -3,7 +3,6 @@ let saldoFinal = saldoInicial;
 let interfazActiva = true;
 let gastosConFecha = [];
 
-
 let categorias = {
   alimentacion: 0, ocio: 0, gasoil: 0, calefaccion: 0, hipoteca: 0,
   luz: 0, agua: 0, internet: 0, otros: 0, transporte: 0
@@ -34,22 +33,23 @@ function updateUI() {
   for (let categoria in categorias) {
     const elemento = document.querySelector(`[data-categoria=${categoria}]`);
     const gasto = categorias[categoria];
-    elemento.querySelector("span").innerText = `${gasto.toFixed(2)}€`;
+    if (elemento) {
+      elemento.querySelector("span").innerText = `${gasto.toFixed(2)}€`;
 
-    if (gasto === 0) {
-      elemento.style.backgroundColor = "#2980b9";
-    } else if (gasto < 50) {
-      elemento.style.backgroundColor = "#2ecc71";
-    } else if (gasto < 150) {
-      elemento.style.backgroundColor = "#f39c12";
-    } else {
-      elemento.style.backgroundColor = "#e74c3c";
+      if (gasto === 0) {
+        elemento.style.backgroundColor = "#2980b9";
+      } else if (gasto < 50) {
+        elemento.style.backgroundColor = "#2ecc71";
+      } else if (gasto < 150) {
+        elemento.style.backgroundColor = "#f39c12";
+      } else {
+        elemento.style.backgroundColor = "#e74c3c";
+      }
+
+      elemento.style.color = "white";
     }
-
-    elemento.style.color = "white";
   }
 }
-
 
 function showGastoModal(categoria) {
   document.getElementById("gastoCategoria").innerText = categoria.charAt(0).toUpperCase() + categoria.slice(1);
@@ -80,7 +80,6 @@ function resetApp() {
   location.reload();
 }
 
-
 document.querySelectorAll(".categoria").forEach(item => {
   item.addEventListener("click", () => {
     if (!interfazActiva) return;
@@ -94,7 +93,6 @@ document.querySelectorAll(".categoria").forEach(item => {
     }
   });
 });
-
 
 document.getElementById("gastoSubmit").addEventListener("click", addGasto);
 document.getElementById("gastoCancel").addEventListener("click", () => document.getElementById("gastoModal").style.display = "none");
@@ -134,7 +132,7 @@ document.getElementById("avisoSi").addEventListener("click", () => {
 
   updateUI();
   mostrarHistorial();
-  guardarDatos(); // <--- esta línea es clave
+  guardarDatos();
 
   document.getElementById("toastCategoria").style.display = "none";
   document.getElementById("gastoModal").style.display = "none";
@@ -150,7 +148,6 @@ document.getElementById("avisoSi").addEventListener("click", () => {
     activarInterfaz();
   }, 2000);
 });
-
 
 document.getElementById("resetButton").addEventListener("click", () => {
   desactivarInterfaz();
@@ -201,7 +198,7 @@ document.getElementById("addSaldoButton").addEventListener("click", () => {
 });
 
 document.getElementById("borrarSaldoButton").addEventListener("click", () => {
-  borrarSaldo(); // SOLO borra si el usuario confirma
+  borrarSaldo();
 });
 
 function actualizarSaldo() {
@@ -236,7 +233,6 @@ function guardarDatos() {
   localStorage.setItem("categorias", JSON.stringify(categorias));
   localStorage.setItem("saldoFinal", saldoFinal);
 
-  // Borramos el historial si está vacío
   if (gastosConFecha.length === 0) {
     localStorage.removeItem("gastosConFecha");
   } else {
@@ -245,8 +241,6 @@ function guardarDatos() {
 
   mostrarToast();
 }
-
-
 
 function mostrarToast() {
   const toast = document.getElementById("toastGuardarDatos");
@@ -283,7 +277,6 @@ function borrarSaldo() {
       localStorage.removeItem("saldoFinal");
       localStorage.removeItem("gastosConFecha");
 
-
       setTimeout(() => {
         toast.style.display = "none";
         location.reload();
@@ -315,53 +308,73 @@ function desactivarInterfaz() {
   });
 }
 
-
 function activarInterfaz() {
   interfazActiva = true;
   document.querySelectorAll("button, input").forEach(el => el.disabled = false);
 }
 
+// ----------- MODIFICADO: mostrarHistorial con botón eliminar gasto -----------
+
 function mostrarHistorial() {
   const historial = document.getElementById("historialGastos");
-  historial.innerHTML = "";  // Limpiar el historial antes de volver a renderizar
+  historial.innerHTML = "";
 
   gastosConFecha.forEach((gasto, index) => {
     const item = document.createElement("li");
+    item.textContent = `${gasto.categoria} - ${gasto.cantidad.toFixed(2)}€ - ${gasto.fecha}`;
 
-    // Crear el texto con la categoría, cantidad y fecha del gasto
-    item.textContent = `${gasto.categoria} - ${gasto.cantidad}€ - ${gasto.fecha}`;
-
-    // Crear el texto "Modificar Gasto"
+    // Botón Modificar
     const modificarHistorialGasto = document.createElement("span");
     modificarHistorialGasto.textContent = "Modificar Gasto";
-    modificarHistorialGasto.classList.add("modificar-gasto"); // Añadir la clase CSS
-
-    // Hacer clic en "Modificar Gasto" abre el modal para editar el gasto
+    modificarHistorialGasto.classList.add("modificar-gasto");
     modificarHistorialGasto.addEventListener("click", () => {
       abrirModalEditarGasto(index);
     });
 
-    // Añadir el texto "Modificar Gasto" al item
-    item.appendChild(modificarHistorialGasto);
+    // Botón Eliminar (X)
+    const eliminarGasto = document.createElement("span");
+    eliminarGasto.textContent = " ✖";
+    eliminarGasto.classList.add("eliminar-gasto");
+    eliminarGasto.style.cursor = "pointer";
+    eliminarGasto.style.marginLeft = "10px";
+    eliminarGasto.title = "Eliminar gasto";
+    eliminarGasto.addEventListener("click", () => {
+      eliminarGastoHistorial(index);
+    });
 
-    // Estilizar el gasto según la cantidad
+    item.appendChild(modificarHistorialGasto);
+    item.appendChild(eliminarGasto);
+
     if (gasto.cantidad < 100) {
-      item.style.backgroundColor = "#2ecc71"; // Verde
+      item.style.backgroundColor = "#2ecc71";
     } else if (gasto.cantidad < 300) {
-      item.style.backgroundColor = "#f39c12"; // Naranja
+      item.style.backgroundColor = "#f39c12";
     } else if (gasto.cantidad < 700) {
-      item.style.backgroundColor = "#e67e22"; // Naranja oscuro
+      item.style.backgroundColor = "#e67e22";
     } else {
-      item.style.backgroundColor = "#e74c3c"; // Rojo
+      item.style.backgroundColor = "#e74c3c";
     }
 
     historial.appendChild(item);
   });
 }
 
+// ----------- NUEVA FUNCIÓN: eliminar gasto del historial -----------
 
+function eliminarGastoHistorial(index) {
+  const gasto = gastosConFecha[index];
+  saldoFinal += gasto.cantidad;
+  const categoria = gasto.categoria.split(" ")[0];
+  categorias[categoria] -= gasto.cantidad;
 
-// CREAMOS FUNCION PARA LA CATEGORIA OTROS
+  gastosConFecha.splice(index, 1);
+
+  updateUI();
+  mostrarHistorial();
+  guardarDatos();
+}
+
+// ----------- RESTO DEL CÓDIGO IGUAL -----------
 
 function mostrarInputPersonalizado() {
   document.getElementById("modalOtros").style.display = "block";
@@ -383,24 +396,20 @@ function mostrarInputPersonalizado() {
       mostrarHistorial();
     }
 
-    // Cerrar modal y limpiar inputs
     document.getElementById("modalOtros").style.display = "none";
     document.getElementById("nombreGastoOtros").value = "";
     document.getElementById("importeGastoOtros").value = "";
   };
 
-  // ✅ Botón para borrar campos sin cerrar el modal
   document.getElementById("borrarGastoOtros").onclick = () => {
     document.getElementById("nombreGastoOtros").value = "";
     document.getElementById("importeGastoOtros").value = "";
   };
 }
 
-// ✅ Botón X para cerrar el modal
 document.getElementById("xOtros").addEventListener("click", () => {
   document.getElementById("modalOtros").style.display = "none";
 });
-
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("borrarGastoOtros").onclick = () => {
@@ -409,20 +418,17 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 });
 
-
-let indiceGastoEditando = null; // para saber qué gasto estamos editando
+let indiceGastoEditando = null;
 
 function abrirModalEditarGasto(index) {
   const gasto = gastosConFecha[index];
   indiceGastoEditando = index;
 
-  // Cargar datos en los inputs
   document.getElementById("editarImporteGasto").value = gasto.cantidad;
   document.getElementById("editarNombreGasto").value = gasto.categoria.includes("otros")
     ? gasto.categoria.replace("otros (", "").replace(")", "")
     : "";
 
-  // Mostrar modal
   document.getElementById("modalEditarGasto").style.display = "block";
 }
 
@@ -431,14 +437,11 @@ document.getElementById("guardarCambiosGasto").onclick = () => {
   const nuevoImporte = parseFloat(document.getElementById("editarImporteGasto").value);
 
   if (!isNaN(nuevoImporte) && nuevoImporte > 0 && indiceGastoEditando !== null) {
-    // Recuperamos el gasto original
     const gastoOriginal = gastosConFecha[indiceGastoEditando];
 
-    // Ajustamos saldo: sumamos el viejo importe, restamos el nuevo
     saldoFinal += gastoOriginal.cantidad;
     saldoFinal -= nuevoImporte;
 
-    // Actualizamos el gasto en el array
     gastosConFecha[indiceGastoEditando] = {
       ...gastoOriginal,
       cantidad: nuevoImporte,
@@ -447,39 +450,24 @@ document.getElementById("guardarCambiosGasto").onclick = () => {
         : gastoOriginal.categoria,
     };
 
-    // Actualizamos el array de categorías
-    const categoria = gastoOriginal.categoria.split(" ")[0]; // "otros" o lo que sea
+    const categoria = gastoOriginal.categoria.split(" ")[0];
     categorias[categoria] -= gastoOriginal.cantidad;
     categorias[categoria] += nuevoImporte;
 
-    // Refrescamos interfaz y localStorage
     updateUI();
     mostrarHistorial();
     guardarDatos();
 
-    // Cerramos modal
     document.getElementById("modalEditarGasto").style.display = "none";
     indiceGastoEditando = null;
   }
 };
-
-
-// ACTIVAR LA X DE MODIFICAR HISTORIAL DE GASTOS
 
 document.getElementById("xEditar").addEventListener("click", () => {
   document.getElementById("modalEditarGasto").style.display = "none";
   indiceGastoEditando = null;
 });
 
-
-// Registra el service worker para PWA
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
-
-
-
-
-
-
-
