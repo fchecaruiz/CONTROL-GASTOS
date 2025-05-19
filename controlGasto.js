@@ -315,13 +315,23 @@ function activarInterfaz() {
 
 // ----------- MODIFICADO: mostrarHistorial con botón eliminar gasto -----------
 
+// ...código anterior...
 function mostrarHistorial() {
   const historial = document.getElementById("historialGastos");
   historial.innerHTML = "";
 
   gastosConFecha.forEach((gasto, index) => {
     const item = document.createElement("li");
-    item.textContent = `${gasto.categoria} - ${gasto.cantidad.toFixed(2)}€ - ${gasto.fecha}`;
+    item.style.position = "relative"; // Para posicionar la X
+
+    // Botón Eliminar (X) en la esquina superior derecha
+    const eliminarGasto = document.createElement("span");
+    eliminarGasto.textContent = "✖";
+    eliminarGasto.classList.add("eliminar-gasto-rect");
+    eliminarGasto.title = "Eliminar gasto";
+    eliminarGasto.addEventListener("click", () => {
+      eliminarGastoHistorial(index);
+    });
 
     // Botón Modificar
     const modificarHistorialGasto = document.createElement("span");
@@ -331,20 +341,16 @@ function mostrarHistorial() {
       abrirModalEditarGasto(index);
     });
 
-    // Botón Eliminar (X)
-    const eliminarGasto = document.createElement("span");
-    eliminarGasto.textContent = " ✖";
-    eliminarGasto.classList.add("eliminar-gasto");
-    eliminarGasto.style.cursor = "pointer";
-    eliminarGasto.style.marginLeft = "10px";
-    eliminarGasto.title = "Eliminar gasto";
-    eliminarGasto.addEventListener("click", () => {
-      eliminarGastoHistorial(index);
-    });
+    // Texto principal
+    const texto = document.createElement("span");
+    texto.textContent = `${gasto.categoria} - ${gasto.cantidad.toFixed(2)}€ - ${gasto.fecha}`;
 
-    item.appendChild(modificarHistorialGasto);
+    // Añadir la X primero para que quede encima
     item.appendChild(eliminarGasto);
+    item.appendChild(texto);
+    item.appendChild(modificarHistorialGasto);
 
+    // Colores según cantidad
     if (gasto.cantidad < 100) {
       item.style.backgroundColor = "#2ecc71";
     } else if (gasto.cantidad < 300) {
