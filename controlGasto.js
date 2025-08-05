@@ -513,7 +513,7 @@ document.getElementById("guardarCambiosGasto").onclick = () => {
     
     const categoriaNueva = gastosConFecha[indiceGastoEditando].categoria.includes("otros") ? "otros" : gastosConFecha[indiceGastoEditando].categoria;
     categorias[categoriaNueva] += nuevoImporte;
-
+//actualizar el meses
     updateUI();
     mostrarHistorial();
     guardarDatos();
