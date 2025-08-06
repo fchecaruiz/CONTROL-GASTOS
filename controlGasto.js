@@ -2,7 +2,7 @@ let saldoInicial = parseFloat(localStorage.getItem("saldoInicial")) || 0;
 let saldoFinal = saldoInicial;
 let interfazActiva = true;
 let gastosConFecha = [];
-
+//CODIGO CON GASTOS POR MES
 let categorias = {
   alimentacion: 0, ocio: 0, gasoil: 0, calefaccion: 0, hipoteca: 0,
   luz: 0, agua: 0, internet: 0, otros: 0, transporte: 0
