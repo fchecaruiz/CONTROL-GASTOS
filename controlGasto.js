@@ -64,8 +64,13 @@ function addGasto() {
   if (!isNaN(gasto) && gasto > 0) {
     saldoFinal -= gasto;
     categorias[categoria] += gasto;
-    gastosConFecha.push({ categoria, cantidad: gasto, fecha: new Date().toLocaleDateString() });
+
+    const now = new Date();
+    const mesAnio = `${now.getMonth() + 1}-${now.getFullYear()}`;
+    gastosConFecha.push({ categoria, cantidad: gasto, fecha: now.toLocaleDateString(), mesAnio });
+
     updateUI();
+    poblarFiltroMes();
     mostrarHistorial();
   }
   document.getElementById("gastoModal").style.display = "none";
@@ -87,9 +92,9 @@ document.querySelectorAll(".categoria").forEach(item => {
     const categoria = item.dataset.categoria;
 
     if (categoria === "otros") {
-      mostrarInputPersonalizado(); 
+      mostrarInputPersonalizado();
     } else {
-      showGastoModal(categoria); 
+      showGastoModal(categoria);
     }
   });
 });
@@ -123,8 +128,8 @@ document.getElementById("borrarTodosGastos").addEventListener("click", () => {
 });
 
 document.getElementById("avisoSi").addEventListener("click", () => {
-  for (let categoria in categorias){
-     categorias[categoria] = 0;
+  for (let categoria in categorias) {
+    categorias[categoria] = 0;
   }
   gastosConFecha = [];
   localStorage.removeItem("gastosConFecha");
@@ -221,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
   saldoFinal = parseFloat(localStorage.getItem("saldoFinal")) || saldoInicial;
   categorias = JSON.parse(localStorage.getItem("categorias")) || categorias;
   gastosConFecha = JSON.parse(localStorage.getItem("gastosConFecha")) || [];
+  poblarFiltroMes(); 
   mostrarHistorial();
 
   updateUI();
@@ -263,7 +269,7 @@ function borrarSaldo() {
   if (saldoFinal > 0) {
     desactivarInterfaz();
     toast.innerHTML = `
-      ⚠️  Se va a borrar TODO EL SALDO y el HISTORIA DE GASTOS. ¿Estas seguro?<br>
+      ⚠️ Se va a borrar TODO EL SALDO y el HISTORIA DE GASTOS. ¿Estas seguro?<br>
       <button id="confirmarBorrado">Sí, borrar</button>
       <button id="cancelarBorrado">Cancelar</button>
     `;
@@ -313,74 +319,115 @@ function activarInterfaz() {
   document.querySelectorAll("button, input").forEach(el => el.disabled = false);
 }
 
-// ----------- MODIFICADO: mostrarHistorial con botón eliminar gasto -----------
+// NUEVA FUNCIÓN: Rellenar el filtro de mes
+function poblarFiltroMes() {
+    const selectMes = document.getElementById("select-mes");
+    if (!selectMes) return;
 
-// ...código anterior...
-function mostrarHistorial() {
-  const historial = document.getElementById("historialGastos");
-  historial.innerHTML = "";
-
-  gastosConFecha.forEach((gasto, index) => {
-    const item = document.createElement("li");
-    item.style.position = "relative"; // Para posicionar la X
-
-    // Botón Eliminar (X) en la esquina superior derecha
-    const eliminarGasto = document.createElement("span");
-    eliminarGasto.textContent = "✖";
-    eliminarGasto.classList.add("eliminar-gasto-rect");
-    eliminarGasto.title = "Eliminar gasto";
-    eliminarGasto.addEventListener("click", () => {
-      eliminarGastoHistorial(index);
+    selectMes.innerHTML = "";
+    
+    const mesesConGastos = [...new Set(gastosConFecha.map(gasto => gasto.mesAnio))];
+    
+    mesesConGastos.sort((a, b) => {
+        const [mesA, anioA] = a.split('-');
+        const [mesB, anioB] = b.split('-');
+        return new Date(anioA, mesA - 1) - new Date(anioB, mesB - 1);
     });
 
-    // Botón Modificar
-    const modificarHistorialGasto = document.createElement("span");
-    modificarHistorialGasto.textContent = "Modificar Gasto";
-    modificarHistorialGasto.classList.add("modificar-gasto");
-    modificarHistorialGasto.addEventListener("click", () => {
-      abrirModalEditarGasto(index);
+    const nombresMes = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    mesesConGastos.forEach(mesAnio => {
+        const [mes, anio] = mesAnio.split('-');
+        const nombreMes = nombresMes[parseInt(mes) - 1];
+        const option = document.createElement("option");
+        option.value = mesAnio;
+        option.text = `${nombreMes} - ${anio}`;
+        selectMes.appendChild(option);
     });
 
-    // Texto principal
-    const texto = document.createElement("span");
-    texto.textContent = `${gasto.categoria} - ${gasto.cantidad.toFixed(2)}€ - ${gasto.fecha}`;
-
-    // Añadir la X primero para que quede encima
-    item.appendChild(eliminarGasto);
-    item.appendChild(texto);
-    item.appendChild(modificarHistorialGasto);
-
-    // Colores según cantidad
-    if (gasto.cantidad < 100) {
-      item.style.backgroundColor = "#2ecc71";
-    } else if (gasto.cantidad < 300) {
-      item.style.backgroundColor = "#f39c12";
-    } else if (gasto.cantidad < 700) {
-      item.style.backgroundColor = "#e67e22";
-    } else {
-      item.style.backgroundColor = "#e74c3c";
+    if (gastosConFecha.length > 0) {
+        selectMes.value = gastosConFecha[gastosConFecha.length - 1].mesAnio;
     }
 
-    historial.appendChild(item);
-  });
+    selectMes.addEventListener('change', mostrarHistorial);
 }
 
-// ----------- NUEVA FUNCIÓN: eliminar gasto del historial -----------
+// FUNCIÓN MODIFICADA: Mostrar el historial filtrado
+function mostrarHistorial() {
+    const historial = document.getElementById("historialGastos");
+    const selectMes = document.getElementById("select-mes");
+    const mesSeleccionado = selectMes ? selectMes.value : null;
+
+    historial.innerHTML = "";
+
+    const gastosFiltrados = mesSeleccionado
+        ? gastosConFecha.filter(gasto => gasto.mesAnio === mesSeleccionado)
+        : gastosConFecha;
+
+    if (gastosFiltrados.length === 0 && mesSeleccionado) {
+        historial.innerHTML = "<li>No hay gastos para este mes.</li>";
+        return;
+    }
+
+    gastosFiltrados.forEach((gasto, index) => {
+        const item = document.createElement("li");
+        item.style.position = "relative";
+
+        const eliminarGasto = document.createElement("span");
+        eliminarGasto.textContent = "✖";
+        eliminarGasto.classList.add("eliminar-gasto-rect");
+        eliminarGasto.title = "Eliminar gasto";
+        eliminarGasto.addEventListener("click", () => {
+            const originalIndex = gastosConFecha.findIndex(g => g === gasto);
+            eliminarGastoHistorial(originalIndex);
+        });
+
+        const modificarHistorialGasto = document.createElement("span");
+        modificarHistorialGasto.textContent = "Modificar Gasto";
+        modificarHistorialGasto.classList.add("modificar-gasto");
+        modificarHistorialGasto.addEventListener("click", () => {
+            const originalIndex = gastosConFecha.findIndex(g => g === gasto);
+            abrirModalEditarGasto(originalIndex);
+        });
+
+        const texto = document.createElement("span");
+        texto.textContent = `${gasto.categoria} - ${gasto.cantidad.toFixed(2)}€ - ${gasto.fecha}`;
+        
+        item.appendChild(eliminarGasto);
+        item.appendChild(texto);
+        item.appendChild(modificarHistorialGasto);
+
+        if (gasto.cantidad < 100) {
+            item.style.backgroundColor = "#2ecc71";
+        } else if (gasto.cantidad < 300) {
+            item.style.backgroundColor = "#f39c12";
+        } else if (gasto.cantidad < 700) {
+            item.style.backgroundColor = "#e67e22";
+        } else {
+            item.style.backgroundColor = "#e74c3c";
+        }
+
+        historial.appendChild(item);
+    });
+}
+
+// ----------- RESTO DEL CÓDIGO IGUAL -----------
 
 function eliminarGastoHistorial(index) {
   const gasto = gastosConFecha[index];
   saldoFinal += gasto.cantidad;
-  const categoria = gasto.categoria.split(" ")[0];
+  const categoria = gasto.categoria.includes("otros") ? "otros" : gasto.categoria;
   categorias[categoria] -= gasto.cantidad;
 
   gastosConFecha.splice(index, 1);
 
   updateUI();
+  poblarFiltroMes();
   mostrarHistorial();
   guardarDatosSinToast();
 }
-
-// ----------- RESTO DEL CÓDIGO IGUAL -----------
 
 function mostrarInputPersonalizado() {
   document.getElementById("modalOtros").style.display = "block";
@@ -392,13 +439,18 @@ function mostrarInputPersonalizado() {
     if (nombre && !isNaN(cantidad) && cantidad > 0) {
       saldoFinal -= cantidad;
       categorias.otros += cantidad;
-      gastosConFecha.push({ 
-        categoria: `otros (${nombre})`, 
-        cantidad, 
-        fecha: new Date().toLocaleDateString() 
+
+      const now = new Date();
+      const mesAnio = `${now.getMonth() + 1}-${now.getFullYear()}`;
+      gastosConFecha.push({
+        categoria: `otros (${nombre})`,
+        cantidad,
+        fecha: now.toLocaleDateString(),
+        mesAnio
       });
 
       updateUI();
+      poblarFiltroMes();
       mostrarHistorial();
     }
 
@@ -448,6 +500,9 @@ document.getElementById("guardarCambiosGasto").onclick = () => {
     saldoFinal += gastoOriginal.cantidad;
     saldoFinal -= nuevoImporte;
 
+    const categoriaOriginal = gastoOriginal.categoria.includes("otros") ? "otros" : gastoOriginal.categoria;
+    categorias[categoriaOriginal] -= gastoOriginal.cantidad;
+    
     gastosConFecha[indiceGastoEditando] = {
       ...gastoOriginal,
       cantidad: nuevoImporte,
@@ -455,10 +510,9 @@ document.getElementById("guardarCambiosGasto").onclick = () => {
         ? `otros (${nuevoNombre})`
         : gastoOriginal.categoria,
     };
-
-    const categoria = gastoOriginal.categoria.split(" ")[0];
-    categorias[categoria] -= gastoOriginal.cantidad;
-    categorias[categoria] += nuevoImporte;
+    
+    const categoriaNueva = gastosConFecha[indiceGastoEditando].categoria.includes("otros") ? "otros" : gastosConFecha[indiceGastoEditando].categoria;
+    categorias[categoriaNueva] += nuevoImporte;
 
     updateUI();
     mostrarHistorial();

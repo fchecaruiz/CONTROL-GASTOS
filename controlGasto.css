@@ -8,29 +8,20 @@
 html, body {
   height: 100%;
   background: linear-gradient(135deg, #476a72, #8e9eab);
-  /* display: block;
-  justify-content: center;
-  align-items: center; */
   margin: 0;
-  padding: 10px;   
+  padding: 10px;
   overflow-x: hidden;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
-
-
 
 body {
   margin: 0;
   padding: 0;
 }
 
-/* CONTENEDOR PRINCIPAL */
-
 .container {
   width: 100%;
   max-width: 900px;
-  /* Elimina o comenta la siguiente línea para evitar que la altura máxima limite el scroll */
-  /* height: calc(100vh - 20px); */
   margin: auto;
   padding: 20px;
   border-radius: 25px;
@@ -42,14 +33,10 @@ body {
   text-align: center;
   display: flex;
   flex-direction: column;
-  /* Puedes quitar justify-content: space-between; para que el contenido no se reparta y permita crecer en altura */
   align-items: center;
-  overflow-y: visible; /* Permite el scroll si el contenido crece */
+  overflow-y: visible;
   overflow-x: hidden;
 }
-
-
-/* TÍTULOS */
 
 h1 {
   font-size: 24px;
@@ -74,8 +61,6 @@ h2 {
   text-transform: capitalize;
 }
 
-
-/* SALDO INPUT */
 .saldo-input-group {
   display: flex;
   flex-wrap: wrap;
@@ -86,9 +71,9 @@ h2 {
 }
 
 #nuevoSaldoInput {
-  width: 290px;         
+  width: 290px;
   padding: 14px;
-  font-size: 17px;    
+  font-size: 17px;
   border-radius: 6px;
   border: 1px solid #bdc3c7;
   text-align: center;
@@ -99,18 +84,14 @@ h2 {
   opacity: 0.8;
 }
 
-
-
-/* BOTONES */
-
 .btn-secondary,
 .btn-primary,
 .btn-reset,
 .btn-modal,
 .toast-btn {
-  padding: 14px 26px;       
+  padding: 14px 26px;
   border-radius: 10px;
-  font-size: 18px;          
+  font-size: 18px;
   font-weight: bold;
   border: none;
   cursor: pointer;
@@ -146,9 +127,6 @@ h2 {
   margin-top: 20px;
 }
 
-
-/* SALDOS */
-
 #saldoDisplay, #totalGastado {
   font-size: 16px;
   font-weight: 600;
@@ -163,16 +141,13 @@ h2 {
   margin: 6px 0;
 }
 
-
-/* PROGRESS BAR */
-
 .progress-container {
   width: 100%;
   background: #ecf0f1;
-  height: 15px; /* antes 25px */
+  height: 15px;
   border-radius: 8px;
   overflow: visible;
-  margin-bottom: 15px; /* antes 25px */
+  margin-bottom: 15px;
 }
 
 #progressBar {
@@ -183,8 +158,6 @@ h2 {
   transition: width 0.4s, background-color 0.4s;
 }
 
-
-/* LISTA DE GASTOS */
 #listaGastos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -210,28 +183,24 @@ h2 {
   color: white;
 }
 
-/* MODAL */
-
 .modal {
   position: fixed;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
-  padding: 14px;             
+  padding: 14px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   z-index: 1000;
   display: none;
   width: 90%;
-  max-width: 360px;              
+  max-width: 360px;
 }
-
-
 
 .modal-content {
   background-color: #6e7cd4;
-  padding: 20px;  
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -246,27 +215,22 @@ h2 {
 }
 
 #gastoInput {
-  width: 75%;             
-  padding: 6px 10px;    
+  width: 75%;
+  padding: 6px 10px;
   border-radius: 6px;
-  font-size: 14px;        
+  font-size: 14px;
   border: 1px solid #ccc;
   text-align: center;
 }
 
-
-p , #gastoCategoria {
-
+p, #gastoCategoria {
   color: #fff;
-
 }
-#gastoCategoria{
-  color:white;
+#gastoCategoria {
+  color: white;
   background-color: #6e7cd4;
 }
 
-
-/* TOASTS */
 .toast {
   position: fixed;
   top: 50%;
@@ -305,7 +269,6 @@ p , #gastoCategoria {
   border: 3px solid white;
 }
 
-/* BOTONES MODALES */
 #gastoCancel {
   background-color: #fc0202;
   color: white;
@@ -343,11 +306,10 @@ p , #gastoCategoria {
   background-color: #000000;
 }
 
-/* CIERRE MODAL */
 #cajaX {
   width: 30px;
   height: 30px;
-  background-color:rgb(248, 128, 128);
+  background-color: rgb(248, 128, 128);
   border-radius: 10px;
   font-size: 25px;
   font-weight: bold;
@@ -359,7 +321,7 @@ p , #gastoCategoria {
   transition: transform 0.2s ease;
   position: absolute;
   right: 4px;
-  top:2px;
+  top: 2px;
   z-index: 1000;
 }
 #cajaX:hover {
@@ -374,7 +336,6 @@ p , #gastoCategoria {
   outline: none;
 }
 
-/* TOAST GUARDAR DATOS */
 #toastGuardarDatos {
   display: none;
   position: absolute;
@@ -389,7 +350,6 @@ p , #gastoCategoria {
   transition: opacity 0.5s linear;
 }
 
-/* BOTONES DE CONFIRMACIÓN SALDO */
 #confirmarBorrado, #cancelarBorrado {
   border-radius: 14px;
   margin: 5px;
@@ -405,7 +365,6 @@ p , #gastoCategoria {
   background-color: #3551dc;
 }
 
-/* TOAST AVISO SALDO NO VÁLIDO */
 #saldoSeguro {
   display: none;
   position: absolute;
@@ -418,8 +377,6 @@ p , #gastoCategoria {
   background-color: #dc3545;
   color: white;
 }
-
-
 
 #historialGastos {
   list-style: none;
@@ -435,9 +392,7 @@ p , #gastoCategoria {
   font-weight: 500;
 }
 
-/* HISTORIAL DE GASTOS */
 #historialGastos li {
-  /* background-color: #eb1b1bc8; */
   color: #2c3e50;
   padding: 10px;
   margin-bottom: 8px;
@@ -452,20 +407,18 @@ p , #gastoCategoria {
   transform: scale(1.02);
   background-color: #d6d9f0;
 }
-#definirTexto{
+#definirTexto {
   font-size: 24px;
   font-weight: bold;
   color: #e7f1f1;
-  text-decoration:dotted underline;
+  text-decoration: dotted underline;
   text-transform: uppercase;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
   margin-bottom: 15px;
 }
 
-/* TOAST CATEGORIAS DE LA SECCON OTROS*/
-
 #guardarGastoOtros {
-  background-color: #0066ff;  /* Azul más moderno */
+  background-color: #0066ff;
   color: white;
   border: none;
   border-radius: 10px;
@@ -538,7 +491,7 @@ p , #gastoCategoria {
 #cajaXOtros:hover {
   transform: scale(1.2);
   background-color: #ff0101;
-  color:white;
+  color: white;
 }
 
 #cajaXOtros:active {
@@ -548,8 +501,6 @@ p , #gastoCategoria {
 #cajaXOtros:focus {
   outline: none;
 }
-
-/* MODIFICAR HISTORIAL DE GASTOS */
 
 #cajaXEditar {
   width: 30px;
@@ -618,7 +569,7 @@ p , #gastoCategoria {
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  margin-left: 40px; /* Más espacio a la izquierda para no solaparse con la X */
+  margin-left: 40px;
   display: inline-block;
   vertical-align: middle;
   background: rgba(255, 255, 255, 0.128);
@@ -631,7 +582,6 @@ p , #gastoCategoria {
   color: #fff;
 }
 
-/* para los moviles */
 @media (max-width: 600px) {
   .modificar-gasto {
     float: none;
@@ -645,7 +595,6 @@ p , #gastoCategoria {
   }
 }
 
-/* Botón eliminar gasto (X) en el historial */
 .eliminar-gasto {
   color: #e74c3c;
   font-weight: bold;
@@ -691,4 +640,41 @@ p , #gastoCategoria {
 #historialGastos li {
   color: #fffffffb !important;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.251);
+}
+
+.titulo-mes {
+  background-color: #3498db !important;
+  color: white !important;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px !important;
+  margin-bottom: 10px !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+}
+
+.filtro-mes {
+    margin-bottom: 20px;
+}
+
+#select-mes {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 2px solid #3498db;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#select-mes:hover {
+    border-color: #2980b9;
+    background-color: #dfe6e9;
+}
+
+#select-mes:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
 }
